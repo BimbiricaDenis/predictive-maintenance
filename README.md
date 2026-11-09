@@ -27,12 +27,12 @@ predictive-maintenance/
 │   └── xgboost_pipeline.joblib # Serialized production-ready model
 ├── requirements.txt         # Project dependencies
 └── README.md
-
+```
 ## Key Engineering Decisions
-1. Eliminating Data Leakage
+**1. Eliminating Data Leakage**
 During EDA, a correlation matrix revealed that specific error type columns (TWF, HDF, PWF, OSF, RNF) were perfectly correlated with the target variable. These were post-failure annotations made by technicians. To ensure the model learns strictly from pre-failure sensor data, these columns were explicitly dropped in the preprocess.py module.
 
-2. Pipeline Integration
+**2. Pipeline Integration**
 Instead of applying manual transformations to the dataframes, a scikit-learn Pipeline combined with a ColumnTransformer was used. This ensures that:
 
 Numerical features are scaled using StandardScaler.
@@ -41,7 +41,7 @@ Categorical quality tiers (L, M, H) are properly encoded using OrdinalEncoder.
 
 The entire preprocessing step is serialized with the model, meaning new raw data can be fed directly into xgboost_pipeline.joblib without manual cleaning.
 
-3. Hyperparameter Tuning & The Precision-Recall Trade-off
+**3. Hyperparameter Tuning & The Precision-Recall Trade-off**
 To handle the severe class imbalance, the XGBoost algorithm was wrapped in a GridSearchCV optimized specifically for the Recall scoring metric.
 
 Business Logic Application:
@@ -51,18 +51,18 @@ By hyper-tuning for Recall, the model achieved a 93% failure detection rate (Rec
 
 ## How to Run
 
-1.Clone the repository and install dependencies:
+**1.Clone the repository and install dependencies:**
 
  git clone [https://github.com/BimbiricaDenis/predictive-maintenance.git](https://github.com/BimbiricaDenis/predictive-maintenance.git)
 cd predictive-maintenance
 pip install -r requirements.txt
 
 
-2.Train the model:
+**2.Train the model:**
 This will load the raw data, run the grid search for optimal parameters, and save the model to the models/ directory.
 
 python src/train.py
 
-3.Evaluate the model:
+**3.Evaluate the model:**
 
 python src/evaluate.py
